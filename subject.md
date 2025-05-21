@@ -34,7 +34,7 @@ L'optimiseur a ces paramètres :
     - Facteur de relaxation *r* (ralentissement de l'algorithme quand le gradient s'approche de 0)
 
 # Structure (fortement inspiré d'ITK)
-`
+```
 ./
     - src/
         - optimizer/
@@ -74,5 +74,5 @@ L'optimiseur a ces paramètres :
             - Registration process quality check, by computing a metric (MI) between output image and reference image
         - benchmark
             - Measure the execution time, memory/cpu usage of the registration process
- `
+ ```
 
