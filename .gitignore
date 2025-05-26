@@ -1,0 +1,12 @@
+# IDE settings
+.idea/
+.vscode/
+
+# Build directories
+build/
+cmake-build-*/
+
+# Build files
+*.o
+*.a
+*.so
