@@ -24,7 +24,6 @@ namespace tifo
             // Apply initial transform and compute initial metric value
             Image current_img = transform->apply_img(moving_img, interpolator_);
             current_metric = metric->compare(fixed_img, current_img);
-            const float current_cost = 1.f - current_metric;
 
             // Log gradient descent status
             std::cout << iter << ',';
@@ -37,21 +36,24 @@ namespace tifo
                 iteration_callback_(iter, current_img);
             }
 
-            // Compute gradient
+            // Compute gradient by centered finite difference
             std::vector<float> parameters = transform->get_parameters();
             std::vector gradient(parameters.size(), 0.0f);
             for (size_t i = 0; i < parameters.size(); ++i)
             {
                 std::vector<float> perturbed = parameters;
+
                 perturbed[i] += step_;
-
                 transform->set_parameters(perturbed);
-                Image tmp_img = transform->apply_img(moving_img, interpolator_);
+                const float cost_plus =
+                    1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
 
-                const float perturbed_metric = metric->compare(fixed_img, tmp_img);
-                const float perturbed_cost = 1.0f - perturbed_metric;
+                perturbed[i] -= 2 * step_;
+                transform->set_parameters(perturbed);
+                const float cost_minus =
+                    1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
 
-                gradient[i] = (perturbed_cost - current_cost) / step_;
+                gradient[i] = (cost_plus - cost_minus) / (2 * step_);
             }
             transform->set_parameters(parameters);
 
