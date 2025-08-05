@@ -1,5 +1,6 @@
 #pragma once
 #include "optimizer.hh"
+#include "interpolator/nearest_neighbor_interpolator.hh"
 
 namespace tifo
 {
@@ -26,5 +27,6 @@ namespace tifo
         float tolerance_;
         int max_iterations_;
         float step_;
+        NearestNeighborInterpolator interpolator_;
     };
 } // namespace tifo

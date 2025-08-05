@@ -1,7 +1,5 @@
 #include "regular_gradient_descent_optimizer.hh"
 
-#include "interpolator/nearest_neighbor_interpolator.hh"
-
 #include <cmath>
 #include <iostream>
 
@@ -19,20 +17,28 @@ namespace tifo
                                                    Image& moving_img)
     {
         std::cout << "iteration,transform,metric" << std::endl;
-        float current_metric = metric->compare(fixed_img, moving_img);
-        float current_cost = 1.0f - current_metric;
 
+        float current_metric = 0.f;
         for (int iter = 0; iter < max_iterations_; ++iter)
         {
-            // Get transform parameters
-            std::vector<float> parameters = transform->get_parameters();
+            // Apply initial transform and compute initial metric value
+            Image current_img = transform->apply_img(moving_img, interpolator_);
+            current_metric = metric->compare(fixed_img, current_img);
+            const float current_cost = 1.f - current_metric;
 
             // Log gradient descent status
             std::cout << iter << ',';
             transform->print(std::cout);
             std::cout << ',' << current_metric << std::endl;
 
+            // Call callback if set
+            if (iteration_callback_)
+            {
+                iteration_callback_(iter, current_img);
+            }
+
             // Compute gradient
+            std::vector<float> parameters = transform->get_parameters();
             std::vector gradient(parameters.size(), 0.0f);
             for (size_t i = 0; i < parameters.size(); ++i)
             {
@@ -40,10 +46,9 @@ namespace tifo
                 perturbed[i] += step_;
 
                 transform->set_parameters(perturbed);
-                NearestNeighborInterpolator interpolator;
-                Image temp_img = transform->apply_img(moving_img, interpolator);
+                Image tmp_img = transform->apply_img(moving_img, interpolator_);
 
-                const float perturbed_metric = metric->compare(fixed_img, temp_img);
+                const float perturbed_metric = metric->compare(fixed_img, tmp_img);
                 const float perturbed_cost = 1.0f - perturbed_metric;
 
                 gradient[i] = (perturbed_cost - current_cost) / step_;
@@ -68,20 +73,6 @@ namespace tifo
                 parameters[i] -= learning_rate_ * gradient[i];
             }
             transform->set_parameters(parameters);
-
-            // Apply transform to moving image
-            NearestNeighborInterpolator interpolator;
-            Image transformed_img = transform->apply_img(moving_img, interpolator);
-
-            // Update current metric/cost
-            current_metric = metric->compare(fixed_img, transformed_img);
-            current_cost = 1.0f - current_metric;
-
-            // Call callback if set
-            if (iteration_callback_)
-            {
-                iteration_callback_(iter, transformed_img);
-            }
         }
     }
 

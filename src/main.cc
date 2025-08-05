@@ -1,6 +1,7 @@
 #include <iostream>
 #include <tiffio.h>
 #include <random>
+#include <numbers>
 #include <filesystem>
 #include <unistd.h>
 
@@ -123,11 +124,12 @@ tifo::RigidTransform random_rigid_transform()
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    // Translation value between [-30, 30]
-    std::uniform_real_distribution translation_dist(-30.f, 30.f);
+    // Translation value between [-5, 5]
+    std::uniform_real_distribution translation_dist(-5.f, 5.f);
 
-    // Rotation angle between [-π/2, π/2] radians (~ -90° à 90°)
-    std::uniform_real_distribution rotation_dist(-3.14159f / 2.f, 3.14159f / 2.f);
+    // Rotation angle between [-π/12, π/12] radians (~ -7.5° à 7.5°)
+    constexpr float PI = std::numbers::pi_v<float>;
+    std::uniform_real_distribution rotation_dist(PI / 12.f, PI / 12.f);
 
     tifo::Vector3f random_translation(translation_dist(gen), translation_dist(gen), translation_dist(gen));
     tifo::Vector3f random_rotation(rotation_dist(gen), rotation_dist(gen), rotation_dist(gen));
