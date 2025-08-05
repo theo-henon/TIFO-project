@@ -54,15 +54,21 @@ namespace tifo
                 gradient[i] = (perturbed_cost - current_cost) / step_;
             }
 
-            // Compute gradient L2 magnitude
+            // Compute gradient L2 magnitude and normalize it
             float norm = 0.0f;
-            for (float g : gradient)
+            for (const float g : gradient)
             {
                 norm += g * g;
             }
             norm = std::sqrt(norm);
-
-            if (norm < tolerance_)
+            if (norm > tolerance_)
+            {
+                for (float& g : gradient)
+                {
+                    g /= norm;
+                }
+            }
+            else
             {
                 break;
             }
