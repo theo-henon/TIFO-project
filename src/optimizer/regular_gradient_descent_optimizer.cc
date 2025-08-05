@@ -54,8 +54,8 @@ namespace tifo
                     1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
 
                 gradient[i] = (cost_plus - cost_minus) / (2 * step_);
+                transform->set_parameters(parameters);
             }
-            transform->set_parameters(parameters);
 
             // Compute gradient L2 magnitude and normalize it
             float norm = 0.0f;
