@@ -124,12 +124,12 @@ tifo::RigidTransform random_rigid_transform()
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    // Translation value between [-5, 5]
-    std::uniform_real_distribution translation_dist(-5.f, 5.f);
+    // Translation value between [-1, 1]
+    std::uniform_real_distribution translation_dist(-1.f, 1.f);
 
-    // Rotation angle between [-π/12, π/12] radians (~ -7.5° à 7.5°)
-    constexpr float PI = std::numbers::pi_v<float>;
-    std::uniform_real_distribution rotation_dist(PI / 12.f, PI / 12.f);
+    // Rotation angle between  ~ -1° à 1°
+    constexpr float angle = 0.017453292519943;
+    std::uniform_real_distribution rotation_dist(-angle, angle);
 
     tifo::Vector3f random_translation(translation_dist(gen), translation_dist(gen), translation_dist(gen));
     tifo::Vector3f random_rotation(rotation_dist(gen), rotation_dist(gen), rotation_dist(gen));

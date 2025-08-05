@@ -53,6 +53,7 @@ namespace tifo
 
                 gradient[i] = (perturbed_cost - current_cost) / step_;
             }
+            transform->set_parameters(parameters);
 
             // Compute gradient L2 magnitude and normalize it
             float norm = 0.0f;
