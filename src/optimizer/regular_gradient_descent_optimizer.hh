@@ -28,5 +28,17 @@ namespace tifo
         int max_iterations_;
         float step_;
         NearestNeighborInterpolator interpolator_;
+
+        /**
+         * Compute the gradient of the function f(transform) = 1 - metric(transform(moving_img), fixed_img) at an
+         * iteration
+         * @param transform The current transform
+         * @param metric The metric to optimize
+         * @param fixed_img The fixed image (will not be modified)
+         * @param moving_img The moving image (will not be modified)
+         * @return The gradient of transform parameters in the same order they are given in transform->get_parameters()
+         */
+        std::vector<float> compute_gradient(Transform* transform, const Metric* metric, const Image& fixed_img,
+                                            const Image& moving_img) const;
     };
 } // namespace tifo

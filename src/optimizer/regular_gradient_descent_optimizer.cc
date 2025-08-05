@@ -36,28 +36,8 @@ namespace tifo
                 iteration_callback_(iter, current_img);
             }
 
-            // Compute gradient by centered finite difference
-            std::vector<float> parameters = transform->get_parameters();
-            std::vector gradient(parameters.size(), 0.0f);
-            for (size_t i = 0; i < parameters.size(); ++i)
-            {
-                std::vector<float> perturbed = parameters;
-
-                perturbed[i] += step_;
-                transform->set_parameters(perturbed);
-                const float cost_plus =
-                    1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
-
-                perturbed[i] -= 2 * step_;
-                transform->set_parameters(perturbed);
-                const float cost_minus =
-                    1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
-
-                gradient[i] = (cost_plus - cost_minus) / (2 * step_);
-                transform->set_parameters(parameters);
-            }
-
-            // Compute gradient L2 magnitude and normalize it
+            // Compute gradient and normalize using L2 distance
+            std::vector gradient = compute_gradient(transform, metric, fixed_img, moving_img);
             float norm = 0.0f;
             for (const float g : gradient)
             {
@@ -77,6 +57,7 @@ namespace tifo
             }
 
             // Update transform
+            std::vector<float> parameters = transform->get_parameters();
             for (size_t i = 0; i < parameters.size(); ++i)
             {
                 parameters[i] -= learning_rate_ * gradient[i];
@@ -128,5 +109,35 @@ namespace tifo
     void RegularGradientDescentOptimizer::set_step(float step)
     {
         step_ = step;
+    }
+
+    std::vector<float> RegularGradientDescentOptimizer::compute_gradient(Transform* transform, const Metric* metric,
+                                                                         const Image& fixed_img,
+                                                                         const Image& moving_img) const
+    {
+        std::vector<float> parameters = transform->get_parameters();
+        std::vector gradient(parameters.size(), 0.0f);
+
+        for (size_t i = 0; i < parameters.size(); ++i)
+        {
+            std::vector<float> perturbed = parameters;
+
+            // +h
+            perturbed[i] += step_;
+            transform->set_parameters(perturbed);
+            const float cost_plus = 1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
+
+            // -h
+            perturbed[i] = parameters[i] - step_;
+            transform->set_parameters(perturbed);
+            const float cost_minus = 1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
+
+            // Gradient
+            gradient[i] = (cost_plus - cost_minus) / (2.f * step_);
+        }
+
+        transform->set_parameters(parameters);
+
+        return gradient;
     }
 } // namespace tifo
