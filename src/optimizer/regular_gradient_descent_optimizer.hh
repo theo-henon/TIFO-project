@@ -40,5 +40,12 @@ namespace tifo
          */
         std::vector<float> compute_gradient(Transform* transform, const Metric* metric, const Image& fixed_img,
                                             const Image& moving_img) const;
+
+        /**
+         * Update transform parameters using the gradient and the learning rate
+         * @param transform The current transform
+         * @param gradient The current gradient
+         */
+        void update_parameters(Transform* transform, const std::vector<float>& gradient) const;
     };
 } // namespace tifo

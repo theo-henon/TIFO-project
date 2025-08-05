@@ -57,12 +57,7 @@ namespace tifo
             }
 
             // Update transform
-            std::vector<float> parameters = transform->get_parameters();
-            for (size_t i = 0; i < parameters.size(); ++i)
-            {
-                parameters[i] -= learning_rate_ * gradient[i];
-            }
-            transform->set_parameters(parameters);
+            update_parameters(transform, gradient);
         }
     }
 
@@ -128,7 +123,7 @@ namespace tifo
             const float cost_plus = 1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
 
             // -h
-            perturbed[i] = parameters[i] - step_;
+            perturbed[i] -= step_;
             transform->set_parameters(perturbed);
             const float cost_minus = 1.f - metric->compare(fixed_img, transform->apply_img(moving_img, interpolator_));
 
@@ -139,5 +134,16 @@ namespace tifo
         transform->set_parameters(parameters);
 
         return gradient;
+    }
+
+    void RegularGradientDescentOptimizer::update_parameters(Transform* transform,
+                                                            const std::vector<float>& gradient) const
+    {
+        std::vector<float> parameters = transform->get_parameters();
+        for (size_t i = 0; i < parameters.size(); ++i)
+        {
+            parameters[i] -= learning_rate_ * gradient[i];
+        }
+        transform->set_parameters(parameters);
     }
 } // namespace tifo
