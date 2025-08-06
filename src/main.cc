@@ -1,13 +1,12 @@
 #include <iostream>
 #include <tiffio.h>
 #include <random>
-#include <numbers>
 #include <filesystem>
 #include <unistd.h>
 
 #include "math/matrix4f.hh"
 #include "image/image.hh"
-#include "interpolator/nearest_neighbor_interpolator.hh"
+#include "interpolator/trilinear_interpolator.hh"
 #include "transform/rigid_transform.hh"
 #include "metric/mean_squared_error_metric.hh"
 #include "optimizer/regular_gradient_descent_optimizer.hh"
@@ -213,7 +212,7 @@ int main(int argc, char* argv[])
 
     optimizer.optimize(&transform, &mse_metric, fixed_image, moving_img);
 
-    tifo::NearestNeighborInterpolator interpolator;
+    tifo::TrilinearInterpolator interpolator;
     tifo::Image transformed_img = transform.apply_img(moving_img, interpolator);
     save_tiff_3d(output_img_path, transformed_img);
 

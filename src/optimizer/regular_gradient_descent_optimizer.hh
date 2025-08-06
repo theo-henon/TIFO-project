@@ -1,6 +1,6 @@
 #pragma once
 #include "optimizer.hh"
-#include "interpolator/nearest_neighbor_interpolator.hh"
+#include "interpolator/trilinear_interpolator.hh"
 
 namespace tifo
 {
@@ -27,7 +27,7 @@ namespace tifo
         float tolerance_;
         int max_iterations_;
         float step_;
-        NearestNeighborInterpolator interpolator_;
+        TrilinearInterpolator interpolator_;
 
         /**
          * Compute the gradient of the function f(transform) = 1 - metric(transform(moving_img), fixed_img) at an
