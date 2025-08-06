@@ -64,7 +64,7 @@ function register() {
     local fixedImgBn="$(basename "$fixedImgAbsPath")"
     local fixedImgBnWithoutExtension="$(echo "$fixedImgBn" | cut -d '.' -f 1)"
 
-    local movingImgAbsPath="$(realpath "$img")"
+    local movingImgAbsPath="$(realpath "$movingImg")"
     local movingImgBn="$(basename "$movingImgAbsPath")"
     local movingImgBnWithoutExtension="$(echo "$movingImgBn" | cut -d '.' -f 1)"
 
