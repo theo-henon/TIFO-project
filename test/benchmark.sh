@@ -74,8 +74,8 @@ OUTPUT_BENCHMARK="${OUTPUT_DIRECTORY}/benchmark.csv"
 echo "fixed_img,moving_img,learning_rate,time,iteration_i,tx_i,ty_i,tz_i,rx_i,ry_i,rz_i,metric_i,iteration_f,tx_f,ty_f,tz_f,rx_f,ry_f,rz_f,metric_f" > "$OUTPUT_BENCHMARK"
 for i in $(seq 1 1 7); do
     for j in $(seq 1 1 7); do
-        fixedImg="../../../tifo-project-samples/${i}-*.fr.tif"
-        movingImg="../../../tifo-project-samples/${j}-*.fr.tif"
+        fixedImg="../../../tifo-project-samples/${i}-*.vlr.tif"
+        movingImg="../../../tifo-project-samples/${j}-*.vlr.tif"
         # shellcheck disable=SC2086
         fixedImgBn="$(basename $fixedImg)"
         # shellcheck disable=SC2086

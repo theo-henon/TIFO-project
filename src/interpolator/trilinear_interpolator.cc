@@ -18,25 +18,27 @@ namespace tifo
         const int y1 = y0 + 1;
         const int z1 = z0 + 1;
 
-        // Check boundary
-        if (x0 < 0 || x1 >= img.get_width() || y0 < 0 || y1 >= img.get_height() || z0 < 0 || z1 >= img.get_depth())
-        {
-            return std::nullopt;
-        }
-
         const float dx = x - static_cast<float>(x0);
         const float dy = y - static_cast<float>(y0);
         const float dz = z - static_cast<float>(z0);
 
         // Get 8 corners around pixel
-        const auto c000 = static_cast<float>(img.get_pixel(x0, y0, z0));
-        const auto c100 = static_cast<float>(img.get_pixel(x1, y0, z0));
-        const auto c010 = static_cast<float>(img.get_pixel(x0, y1, z0));
-        const auto c110 = static_cast<float>(img.get_pixel(x1, y1, z0));
-        const auto c001 = static_cast<float>(img.get_pixel(x0, y0, z1));
-        const auto c101 = static_cast<float>(img.get_pixel(x1, y0, z1));
-        const auto c011 = static_cast<float>(img.get_pixel(x0, y1, z1));
-        const auto c111 = static_cast<float>(img.get_pixel(x1, y1, z1));
+        float c000,c100,c010,c110,c001,c101,c011,c111;
+        try
+        {
+            c000 = static_cast<float>(img.get_pixel(x0, y0, z0));
+            c100 = static_cast<float>(img.get_pixel(x1, y0, z0));
+            c010 = static_cast<float>(img.get_pixel(x0, y1, z0));
+            c110 = static_cast<float>(img.get_pixel(x1, y1, z0));
+            c001 = static_cast<float>(img.get_pixel(x0, y0, z1));
+            c101 = static_cast<float>(img.get_pixel(x1, y0, z1));
+            c011 = static_cast<float>(img.get_pixel(x0, y1, z1));
+            c111 = static_cast<float>(img.get_pixel(x1, y1, z1));
+        }
+        catch (const std::out_of_range&)
+        {
+            return std::nullopt;
+        }
 
         // Interpolation along x
         const float c00 = c000 * (1 - dx) + c100 * dx;
