@@ -10,7 +10,3 @@ cmake-build-*/
 *.o
 *.a
 *.so
-
-# Fiji (ImageJ) files
-Fiji/
-*.ijm
